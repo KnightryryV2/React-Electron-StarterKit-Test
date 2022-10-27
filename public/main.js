@@ -5,6 +5,7 @@ require('@electron/remote/main').initialize()
 const Store = require('electron-store');
 const { ipcMain } = require('electron/main');
 const {download} = require('electron-dl');
+const { Client, Authenticator } = require('minecraft-launcher-core')
 
 
 
@@ -43,3 +44,28 @@ app.on('activate', function () {
   // dock icon is clicked and there are no other windows open.
   if (BrowserWindow.getAllWindows().length === 0) createWindow()
 })
+
+ipcMain.on("app/launch", () => {
+  const launcher = new Client();
+
+  let opts = {
+    clientPackage: 'https://github.com/knightryry/KNGClient-Libs/raw/main/clientPackage.zip',
+    authorization: Authenticator.getAuth("NameHere"),
+    root: "./minecraft",
+    version: {
+        number: "1.8.9",
+        type: "release",
+        custom: "KNGClient"
+    },
+    memory: {
+        max: "4G",
+        min: "4G"
+    }
+  }
+
+  
+
+  launcher.launch(opts);
+
+  launcher.on('debug', (e) => console.log(e));
+});
